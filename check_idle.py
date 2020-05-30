@@ -5,6 +5,8 @@ import subprocess
 import logging
 from logging import handlers
 from datetime import datetime, timedelta
+import re
+import dateutil.parser
 
 work_dir = os.path.dirname(sys.argv[0])
 script_name = os.path.basename(sys.argv[0])
@@ -30,6 +32,32 @@ def is_idle():
     load_thresh = 1.0
     idle = (loadavg[0] < load_thresh and loadavg[1] < load_thresh and loadavg[2] < load_thresh)
     return idle
+
+def is_wakeup_recently():
+    last_wakeup_log = None
+    with open('/var/log/kern.log') as logfile:
+        for line in logfile:
+            if line.find(' PM: suspend exit') != -1:
+                last_wakeup_log = line
+    
+    if last_wakeup_log is None:
+        return False
+
+    #print('log:',line)
+    re_obj = re.search('^[^ ]+ [^ ]+ [^ ]+ ', last_wakeup_log)
+    #print('re', re_obj.group(), '$')
+    event_time = dateutil.parser.parse(re_obj.group())
+    #print('dt',event_time)
+    delta = datetime.now()-event_time
+    #print('delta', delta)
+
+    logger.info('is_wakeup_recently: %s,%s', event_time, delta)
+
+    if delta > timedelta(minutes=5):
+        return False
+    else:
+        return True
+    
 
 def time_to_next_wakeup(now):
     now_hour = now.hour + now.minute / 60.0 + now.second / 3600.0
@@ -74,7 +102,7 @@ def rtcwake(seconds):
 def main():
     #now = datetime(2020, 5, 30, 22, 55, 12)
     #time_to_next_wakeup(now)
-    if is_idle():
+    if is_idle() and not is_wakeup_recently():
         now = datetime.now()
         sec = time_to_next_wakeup(now)
         rtcwake(sec)
