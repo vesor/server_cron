@@ -29,7 +29,7 @@ def get_load_avg():
 def is_idle():
     loadavg = os.getloadavg()
     logger.info('getloadavg: %s', loadavg)
-    load_thresh = 1.0
+    load_thresh = 0.2
     idle = (loadavg[0] < load_thresh and loadavg[1] < load_thresh and loadavg[2] < load_thresh)
     return idle
 
