@@ -29,7 +29,7 @@ def get_load_avg():
 def is_idle():
     loadavg = os.getloadavg()
     logger.info('getloadavg: %s', loadavg)
-    load_thresh = 0.2
+    load_thresh = 0.5
     idle = (loadavg[0] < load_thresh and loadavg[1] < load_thresh and loadavg[2] < load_thresh)
     return idle
 
@@ -45,8 +45,14 @@ def is_wakeup_recently():
 
     #print('log:',line)
     re_obj = re.search('^[^ ]+ [^ ]+ [^ ]+ ', last_wakeup_log)
+    if re_obj is None:
+        return False
+
     #print('re', re_obj.group(), '$')
     event_time = dateutil.parser.parse(re_obj.group())
+    if event_time is None:
+        return False
+
     #print('dt',event_time)
     delta = datetime.now()-event_time
     #print('delta', delta)
