@@ -114,7 +114,7 @@ def main():
     if not is_locked() and is_idle() and not is_wakeup_recently():
         now = datetime.now()
         sec = time_to_next_wakeup(now)
-        rtcwake(10)
+        rtcwake(sec)
 
 if __name__ == "__main__":
     main()
