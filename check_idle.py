@@ -57,7 +57,7 @@ def is_wakeup_recently():
 
     logger.info('is_wakeup_recently: %s,%s', waketime, delta)
 
-    if delta > timedelta(minutes=5):
+    if delta > timedelta(minutes=4):
         return False
     else:
         return True
