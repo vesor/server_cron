@@ -1,7 +1,6 @@
 
 '''
-use "sudo crontab -e" to add a task for this script:
-for example, every 5 min:
+use "sudo crontab -e" to add a task to run this script (for example, every 5 min):
 
 */5 * * * * sudo python3 /media/data/server_cron/check_idle.py
 
