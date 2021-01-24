@@ -1,0 +1,1 @@
+sh retry.sh 1000 60 "sshpass -p PASSWD ssh NAME@xx.xx.xx.xx touch /media/data/server_cron/data/lock"
